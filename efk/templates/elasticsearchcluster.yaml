@@ -1,0 +1,26 @@
+apiVersion: enterprises.upmc.com/v1
+kind: ElasticsearchCluster
+metadata:
+  name: efk
+spec:
+  elastic-search-image: {{ .Values.elasticsearch.image.repository }}:{{ .Values.elasticsearch.image.tag }}
+  client-node-replicas: {{ .Values.elasticsearch.clientReplicas }}
+  master-node-replicas: {{ .Values.elasticsearch.masterReplicas }}
+  data-node-replicas: {{ .Values.elasticsearch.dataReplicas }}
+  data-volume-size: {{ .Values.elasticsearch.dataVolumeSize }}
+  java-options: {{ .Values.elasticsearch.javaOpts }}
+  network-host: "0.0.0.0"
+  use-ssl: {{ .Values.elasticsearch.useSsl }}
+  snapshot:
+    scheduler-enabled: {{ .Values.elasticsearch.snapshot.enabled }}
+  storage:
+    storage-class: {{ .Values.elasticsearch.storage.storageClass }}
+    volume-reclaim-policy: {{ .Values.elasticsearch.storage.reclaimPolicy }}
+  kibana:
+    enabled: false
+  cerebro:
+    enabled: false
+  statsd:
+    enabled: false
+  resources:
+{{ toYaml .Values.elasticsearch.resources | indent 4 }}

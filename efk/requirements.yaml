@@ -1,0 +1,11 @@
+# requirements.yaml
+dependencies:
+- name: elasticsearch-operator
+  version: "0.1.3"
+  repository: "https://raw.githubusercontent.com/upmc-enterprises/elasticsearch-operator/master/charts/"
+- name: fluent-bit
+  version: "0.11.1"
+  repository: "https://kubernetes-charts.storage.googleapis.com"
+- name: kibana
+  version: "0.14.2"
+  repository: "https://kubernetes-charts.storage.googleapis.com"
