@@ -1,0 +1,69 @@
+{{- if .Values.psp.enabled }}
+{{- if .Capabilities.APIVersions.Has "policy/v1beta1" }}
+apiVersion: policy/v1beta1
+{{- else }}
+apiVersion: extensions/v1beta1
+{{- end }}
+kind: PodSecurityPolicy
+metadata:
+  annotations:
+    "helm.sh/hook": "pre-install"
+  name: psp-{{ include "call-nested" (list . "fluent-bit" "fluent-bit.fullname") }}
+spec:
+  privileged: false
+  seLinux:
+    rule: RunAsAny
+  runAsUser:
+    rule: RunAsAny
+  supplementalGroups:
+    rule: RunAsAny
+  fsGroup:
+    rule: RunAsAny
+  volumes:
+  - 'configMap'
+  - 'emptyDir'
+  - 'projected'
+  - 'secret'
+  - 'downwardAPI'
+  - 'hostPath'
+  allowedHostPaths:
+  - pathPrefix: "/var/log"
+  - pathPrefix: "/var/lib/docker/containers"
+  hostNetwork: false
+  hostIPC: false
+  hostPID: false
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  annotations:
+    "helm.sh/hook": "pre-install"
+  name: psp-{{ include "call-nested" (list . "fluent-bit" "fluent-bit.fullname") }}
+rules:
+  - apiGroups:
+    - extensions
+    {{- if .Capabilities.APIVersions.Has "policy/v1beta1" }}
+    - policy
+    {{- end }}
+    resources:
+    - podsecuritypolicies
+    resourceNames:
+    - psp-{{ include "call-nested" (list . "fluent-bit" "fluent-bit.fullname") }}
+    verbs:
+    - use
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  annotations:
+    "helm.sh/hook": "pre-install"
+  name: psp-{{ include "call-nested" (list . "fluent-bit" "fluent-bit.fullname") }}
+roleRef:
+  kind: ClusterRole
+  name: psp-{{ include "call-nested" (list . "fluent-bit" "fluent-bit.fullname") }}
+  apiGroup: rbac.authorization.k8s.io
+subjects:
+- kind: ServiceAccount
+  name: {{ include "call-nested" (list . "fluent-bit" "fluent-bit.serviceAccountName") }}
+  namespace: {{ .Release.Namespace }}
+{{- end }}

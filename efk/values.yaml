@@ -1,9 +1,12 @@
+psp:
+  enabled: true
+
 elasticsearch-operator:
   rbac:
     enabled: true
   image:
-    repository: upmcenterprises/elasticsearch-operator
-    tag: 0.0.12
+    repository: liviudm/elasticsearch-operator
+    tag: v0.2.0-sa1
     pullPolicy: Always
   resources:
     limits:
@@ -32,6 +35,7 @@ kibana:
     repository: "docker.elastic.co/kibana/kibana-oss"
     tag: "6.1.3"
     pullPolicy: "IfNotPresent"
+  serviceAccountName: kibana
   env:
     ELASTICSEARCH_URL: http://elasticsearch-efk:9200
     SERVER_PORT: 5601
@@ -73,10 +77,11 @@ elasticsearch:
   dataVolumeSize: 64Gi
   javaOpts: "-Xms512m -Xmx512m"
   useSsl: false
+  serviceAccountName: elasticsearch
   snapshot:
     enabled: false
   storage:
-    storageClass: "managed-standard"
+    storageClass: "gp2"
     reclaimPolicy: "Delete"
   resources:
     requests:

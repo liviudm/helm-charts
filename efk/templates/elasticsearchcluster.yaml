@@ -11,6 +11,7 @@ spec:
   java-options: {{ .Values.elasticsearch.javaOpts }}
   network-host: "0.0.0.0"
   use-ssl: {{ .Values.elasticsearch.useSsl }}
+  serviceAccountName: {{ .Values.elasticsearch.serviceAccountName }}
   snapshot:
     scheduler-enabled: {{ .Values.elasticsearch.snapshot.enabled }}
   storage:
